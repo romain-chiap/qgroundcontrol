@@ -94,6 +94,7 @@
 #include "LogReplayLink.h"
 #include "VehicleObjectAvoidance.h"
 #include "TrajectoryPoints.h"
+#include "TrajectoryPointsAhead.h"
 #include "RCToParamDialogController.h"
 #include "QGCImageProvider.h"
 #include "TerrainProfile.h"
@@ -494,6 +495,7 @@ void QGCApplication::_initCommon()
     qmlRegisterUncreatableType<QGCMapPolygon>       ("QGroundControl.FlightMap",            1, 0, "QGCMapPolygon",              kRefOnly);
     qmlRegisterUncreatableType<QGCGeoBoundingCube>  ("QGroundControl.FlightMap",            1, 0, "QGCGeoBoundingCube",         kRefOnly);
     qmlRegisterUncreatableType<TrajectoryPoints>    ("QGroundControl.FlightMap",            1, 0, "TrajectoryPoints",           kRefOnly);
+    qmlRegisterUncreatableType<TrajectoryPointsAhead> ("QGroundControl.FlightMap",          1, 0, "TrajectoryPointsAhead",      kRefOnly);    
 
     qmlRegisterUncreatableType<FactValueGrid>       (kQGCTemplates,                         1, 0, "FactValueGrid",              kRefOnly);
     qmlRegisterType<HorizontalFactValueGrid>        (kQGCTemplates,                         1, 0, "HorizontalFactValueGrid");

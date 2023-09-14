@@ -62,6 +62,7 @@ class QGCCameraManager;
 class Joystick;
 class VehicleObjectAvoidance;
 class TrajectoryPoints;
+class TrajectoryPointsAhead;
 class TerrainProtocolHandler;
 class ComponentInformationManager;
 class VehicleBatteryFactGroup;
@@ -168,6 +169,7 @@ public:
     Q_PROPERTY(QStringList          extraJoystickFlightModes    READ extraJoystickFlightModes                                       NOTIFY flightModesChanged)
     Q_PROPERTY(QString              flightMode                  READ flightMode                 WRITE setFlightMode                 NOTIFY flightModeChanged)
     Q_PROPERTY(TrajectoryPoints*    trajectoryPoints            MEMBER _trajectoryPoints                                            CONSTANT)
+    Q_PROPERTY(TrajectoryPointsAhead*    trajectoryPointsAhead  MEMBER _trajectoryPointsAhead                                       CONSTANT)    
     Q_PROPERTY(QmlObjectListModel*  cameraTriggerPoints         READ cameraTriggerPoints                                            CONSTANT)
     Q_PROPERTY(float                latitude                    READ latitude                                                       NOTIFY coordinateChanged)
     Q_PROPERTY(float                longitude                   READ longitude                                                      NOTIFY coordinateChanged)
@@ -1145,6 +1147,7 @@ private:
     QElapsedTimer                   _flightTimer;
     QTimer                          _flightTimeUpdater;
     TrajectoryPoints*               _trajectoryPoints = nullptr;
+    TrajectoryPointsAhead*          _trajectoryPointsAhead = nullptr;
     QmlObjectListModel              _cameraTriggerPoints;
     //QMap<QString, ADSBVehicle*>     _trafficVehicleMap;
 

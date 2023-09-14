@@ -42,6 +42,7 @@
 #include "PositionManager.h"
 #include "VehicleObjectAvoidance.h"
 #include "TrajectoryPoints.h"
+#include "TrajectoryPointsAhead.h"
 #include "QGCGeo.h"
 #include "TerrainProtocolHandler.h"
 #include "ParameterManager.h"
@@ -132,6 +133,7 @@ Vehicle::Vehicle(LinkInterface*             link,
     , _firmwarePluginManager        (firmwarePluginManager)
     , _joystickManager              (joystickManager)
     , _trajectoryPoints             (new TrajectoryPoints(this, this))
+    , _trajectoryPointsAhead        (new TrajectoryPointsAhead(this, this))    
     , _mavlinkStreamConfig          (std::bind(&Vehicle::_setMessageInterval, this, std::placeholders::_1, std::placeholders::_2))
     , _rollFact                     (0, _rollFactName,              FactMetaData::valueTypeDouble)
     , _pitchFact                    (0, _pitchFactName,             FactMetaData::valueTypeDouble)
@@ -287,6 +289,7 @@ Vehicle::Vehicle(MAV_AUTOPILOT              firmwareType,
     , _capabilityBits                   (MAV_PROTOCOL_CAPABILITY_MISSION_FENCE | MAV_PROTOCOL_CAPABILITY_MISSION_RALLY)
     , _firmwarePluginManager            (firmwarePluginManager)
     , _trajectoryPoints                 (new TrajectoryPoints(this, this))
+    , _trajectoryPointsAhead            (new TrajectoryPointsAhead(this, this))    
     , _mavlinkStreamConfig              (std::bind(&Vehicle::_setMessageInterval, this, std::placeholders::_1, std::placeholders::_2))
     , _rollFact                         (0, _rollFactName,              FactMetaData::valueTypeDouble)
     , _pitchFact                        (0, _pitchFactName,             FactMetaData::valueTypeDouble)
@@ -377,6 +380,8 @@ void Vehicle::_commonInit()
 
     connect(_missionManager, &MissionManager::sendComplete,             _trajectoryPoints, &TrajectoryPoints::clear);
     connect(_missionManager, &MissionManager::newMissionItemsAvailable, _trajectoryPoints, &TrajectoryPoints::clear);
+    connect(_missionManager, &MissionManager::sendComplete,             _trajectoryPointsAhead, &TrajectoryPointsAhead::clear);
+    connect(_missionManager, &MissionManager::newMissionItemsAvailable, _trajectoryPointsAhead, &TrajectoryPointsAhead::clear);    
 
     _componentInformationManager    = new ComponentInformationManager   (this);
     _initialConnectStateMachine     = new InitialConnectStateMachine    (this);
@@ -1513,12 +1518,14 @@ void Vehicle::_updateArmed(bool armed)
         // We are transitioning to the armed state, begin tracking trajectory points for the map
         if (_armed) {
             _trajectoryPoints->start();
+            _trajectoryPointsAhead->start();
             _flightTimerStart();
             _clearCameraTriggerPoints();
             // Reset battery warning
             _lowestBatteryChargeStateAnnouncedMap.clear();
         } else {
             _trajectoryPoints->stop();
+            _trajectoryPointsAhead->stop();
             _flightTimerStop();
             // Also handle Video Streaming
             if(qgcApp()->toolbox()->videoManager()->videoReceiver()) {

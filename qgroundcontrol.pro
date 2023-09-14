@@ -717,6 +717,7 @@ HEADERS += \
     src/Vehicle/TerrainFactGroup.h \
     src/Vehicle/TerrainProtocolHandler.h \
     src/Vehicle/TrajectoryPoints.h \
+    src/Vehicle/TrajectoryPointsAhead.h \
     src/Vehicle/Vehicle.h \
     src/Vehicle/VehicleObjectAvoidance.h \
     src/Vehicle/VehicleBatteryFactGroup.h \
@@ -968,6 +969,7 @@ SOURCES += \
     src/Vehicle/TerrainFactGroup.cc \
     src/Vehicle/TerrainProtocolHandler.cc \
     src/Vehicle/TrajectoryPoints.cc \
+    src/Vehicle/TrajectoryPointsAhead.cc \
     src/Vehicle/Vehicle.cc \
     src/Vehicle/VehicleObjectAvoidance.cc \
     src/Vehicle/VehicleBatteryFactGroup.cc \
