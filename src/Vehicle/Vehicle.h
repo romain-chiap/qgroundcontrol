@@ -843,6 +843,7 @@ public slots:
 
 signals:
     void coordinateChanged              (QGeoCoordinate coordinate);
+    void waypointChanged                (QGeoCoordinate coordinate);
     void joystickEnabledChanged         (bool enabled);
     void mavlinkMessageReceived         (const mavlink_message_t& message);
     void homePositionChanged            (const QGeoCoordinate& homePosition);
@@ -1012,6 +1013,7 @@ private:
 #if !defined(NO_ARDUPILOT_DIALECT)
     void _handleCameraFeedback          (const mavlink_message_t& message);
 #endif
+    void _handleTrajectoryRepresentationWaypoints (const mavlink_message_t& message);
     void _handleCameraImageCaptured     (const mavlink_message_t& message);
     void _handleADSBVehicle             (const mavlink_message_t& message);
     void _missionManagerError           (int errorCode, const QString& errorMsg);
@@ -1060,6 +1062,7 @@ private:
     UAS* _uas = nullptr;
 
     QGeoCoordinate  _coordinate;
+    QGeoCoordinate  _waypoint;
     QGeoCoordinate  _homePosition;
     QGeoCoordinate  _armedPosition;
 

@@ -792,6 +792,9 @@ void Vehicle::_mavlinkMessageReceived(LinkInterface* link, mavlink_message_t mes
         _handleCameraFeedback(message);
         break;
 #endif
+    case MAVLINK_MSG_ID_TRAJECTORY_REPRESENTATION_WAYPOINTS:
+        _handleTrajectoryRepresentationWaypoints(message);
+        break;
     }
 
     // This must be emitted after the vehicle processes the message. This way the vehicle state is up to date when anyone else
@@ -813,6 +816,32 @@ void Vehicle::_handleCameraFeedback(const mavlink_message_t& message)
     _cameraTriggerPoints.append(new QGCQGeoCoordinate(imageCoordinate, this));
 }
 #endif
+
+void Vehicle::_handleTrajectoryRepresentationWaypoints(const mavlink_message_t& message)
+{
+    mavlink_trajectory_representation_waypoints_t traj_wp;
+
+    mavlink_msg_trajectory_representation_waypoints_decode(&message, &traj_wp);
+
+    _trajectoryPointsAhead->clear();
+
+    uint8_t valid_points = traj_wp.valid_points;
+    for (uint8_t i = 0; i < valid_points; i++)
+    {
+        const double CONSTANTS_RADIUS_OF_EARTH=6.378e6;
+        const double posx = static_cast<double>(traj_wp.pos_x[i]);
+        const double posy = static_cast<double>(traj_wp.pos_y[i]);
+        const double latitude  = _homePosition.latitude() + qRadiansToDegrees(posx / CONSTANTS_RADIUS_OF_EARTH);
+        const double cos_lat0 = cos(qDegreesToRadians(_homePosition.latitude()));
+        const double longitude = _homePosition.longitude() + qRadiansToDegrees(posy / CONSTANTS_RADIUS_OF_EARTH) / cos_lat0;
+        const double altitude = 0.0;
+
+        _waypoint.setLatitude(latitude);
+        _waypoint.setLongitude(longitude);
+        _waypoint.setAltitude(altitude);
+        emit waypointChanged(_waypoint);
+    }
+}
 
 void Vehicle::_handleOrbitExecutionStatus(const mavlink_message_t& message)
 {

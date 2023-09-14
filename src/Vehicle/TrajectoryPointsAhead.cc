@@ -54,12 +54,13 @@ void TrajectoryPointsAhead::_vehicleCoordinateChanged(QGeoCoordinate coordinate)
 void TrajectoryPointsAhead::start(void)
 {
     clear();
-    connect(_vehicle, &Vehicle::coordinateChanged, this, &TrajectoryPointsAhead::_vehicleCoordinateChanged);
+    connect(_vehicle, &Vehicle::waypointChanged, this, &TrajectoryPointsAhead::_vehicleCoordinateChanged);
 }
 
 void TrajectoryPointsAhead::stop(void)
 {
-    disconnect(_vehicle, &Vehicle::coordinateChanged, this, &TrajectoryPointsAhead::_vehicleCoordinateChanged);
+    clear();
+    disconnect(_vehicle, &Vehicle::waypointChanged, this, &TrajectoryPointsAhead::_vehicleCoordinateChanged);
 }
 
 void TrajectoryPointsAhead::clear(void)
