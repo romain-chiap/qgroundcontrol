@@ -30,6 +30,10 @@
     #include "SerialLink.h"
 #endif
 
+extern "C" {
+#include "xplaneConnect.h"
+}
+
 Q_DECLARE_LOGGING_CATEGORY(LinkManagerLog)
 Q_DECLARE_LOGGING_CATEGORY(LinkManagerVerboseLog)
 
@@ -139,6 +143,15 @@ public:
 
     static const char*  settingsGroup;
 
+    void initializeXPlaneXPCSocket();
+
+    // Getter for the XPCSocket
+    XPCSocket& getXPCSocket() {
+        return _xpcSock;
+    }
+
+    void closeXPCSocket();
+    
 signals:
     void commPortStringsChanged();
     void commPortsChanged();
@@ -162,6 +175,8 @@ private:
 #ifndef NO_SERIAL_LINK
     bool                _portAlreadyConnected       (const QString& portName);
 #endif
+
+    XPCSocket _xpcSock;  // Declare this in LinkManager.h
 
     bool                                _configUpdateSuspended;                     ///< true: stop updating configuration list
     bool                                _configurationsLoaded;                      ///< true: Link configurations have been loaded

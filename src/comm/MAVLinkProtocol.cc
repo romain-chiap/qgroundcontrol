@@ -337,6 +337,9 @@ void MAVLinkProtocol::receiveBytes(LinkInterface* link, QByteArray b)
                 mavlink_high_latency2_t highLatency2;
                 mavlink_msg_high_latency2_decode(&_message, &highLatency2);
                 emit vehicleHeartbeatInfo(link, _message.sysid, _message.compid, highLatency2.autopilot, highLatency2.type);
+            }  else if (_message.msgid == MAVLINK_MSG_ID_HIL_STATE_QUATERNION) { // Hugo added code
+                _startLogging();
+                handleHilStateQuaternion(_message);
             }
 
 #if 0
@@ -384,6 +387,29 @@ void MAVLinkProtocol::receiveBytes(LinkInterface* link, QByteArray b)
             memset(&_status,  0, sizeof(_status));
             memset(&_message, 0, sizeof(_message));
         }
+    }
+}
+
+void MAVLinkProtocol::handleHilStateQuaternion(const mavlink_message_t& message) {
+    mavlink_hil_state_quaternion_t hilState;
+    mavlink_msg_hil_state_quaternion_decode(&message, &hilState);
+
+    // Convert the received message to the required POSI format
+    double lat = hilState.lat / 1E7;
+    double lon = hilState.lon / 1E7;
+    double alt = hilState.alt / 1000.0;  // Convert from mm to meters
+
+    // Variables to hold the resulting angles
+    float roll, pitch, yaw;
+    mavlink_quaternion_to_euler(hilState.attitude_quaternion, &roll, &pitch, &yaw);
+
+    // Access the XPC socket via the LinkManager's getter
+    XPCSocket& xpcSock = _toolbox->linkManager()->getXPCSocket();
+
+    double values[7] = {lat, lon, alt, (double)pitch, (double)roll, (double)yaw, 0.0};  // Example values
+    int result = sendPOSI(xpcSock, values, 7, 0);
+    if (result < 0) {
+        qDebug() << "Failed to send POSI command. Error code:" << result;
     }
 }
 

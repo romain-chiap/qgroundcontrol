@@ -24,6 +24,10 @@
 #include "QGCTemporaryFile.h"
 #include "QGCToolbox.h"
 
+extern "C" {
+#include "xplaneConnect.h"
+}
+
 class LinkManager;
 class MultiVehicleManager;
 class QGCApplication;
@@ -170,5 +174,8 @@ private:
 
     LinkManager*            _linkMgr;
     MultiVehicleManager*    _multiVehicleManager;
+
+    /// Function to handle the HIL_STATE_QUATERNION message case and send it to X-Plane 12 via the XPC plugin
+    void handleHilStateQuaternion(const mavlink_message_t& message);
 };
 

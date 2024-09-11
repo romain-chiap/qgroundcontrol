@@ -15,3 +15,5 @@ target_link_libraries(libevents_parser PUBLIC comm)
 add_library(libevents_health_and_arming_checks
     libevents/libs/cpp/parse/health_and_arming_checks.cpp)
 target_link_libraries(libevents_health_and_arming_checks PRIVATE comm)
+
+add_compile_options(-Wno-unused-parameter)

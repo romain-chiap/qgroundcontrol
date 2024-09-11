@@ -38,6 +38,8 @@ add_library(comm
 	UdpIODevice.h
 	UDPLink.cc
 	UDPLink.h
+    xplaneConnect.c
+    xplaneConnect.h
 
 	${EXTRA_SRC}
 )
@@ -54,3 +56,4 @@ target_link_libraries(comm
 )
 
 target_include_directories(comm INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
+
