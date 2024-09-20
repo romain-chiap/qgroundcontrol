@@ -95,6 +95,32 @@ void LinkManager::setToolbox(QGCToolbox *toolbox)
     connect(&_portListTimer, &QTimer::timeout, this, &LinkManager::_updateAutoConnectLinks);
     _portListTimer.start(_autoconnectUpdateTimerMSecs); // timeout must be long enough to get past bootloader on second pass
 
+    // Call initializeXPlaneUDPLink after toolbox is set
+    QTimer::singleShot(5000, this, SLOT(initializeXPlaneXPCSocket()));  // 5-second delay
+}
+
+void LinkManager::initializeXPlaneXPCSocket()
+{
+    // Initialize the XPC socket
+    XPCSocket xpcSock = aopenUDP("127.0.0.1", 49009, 0);  // 49009 is typically the UDP port for X-Plane
+
+    if (xpcSock.sock < 0) {
+        qDebug() << "Failed to initialize XPC UDP socket.";
+        return;
+    }
+
+    _xpcSock = xpcSock;  // Store the XPC socket in a member variable
+    qDebug() << "XPC UDP socket initialized successfully.";
+}
+
+// Function to close the XPC socket
+void LinkManager::closeXPCSocket()
+{
+    if (_xpcSock.sock >= 0) {
+        closeUDP(_xpcSock);
+        _xpcSock.sock = -1;  // Reset the socket to indicate it’s closed
+        qDebug() << "XPC UDP socket closed.";
+    }
 }
 
 // This should only be used by Qml code
@@ -671,6 +697,9 @@ void LinkManager::shutdown(void)
     while (_toolbox->multiVehicleManager()->vehicles()->count()) {
         qgcApp()->processEvents(QEventLoop::ExcludeUserInputEvents);
     }
+
+    // Close the XPC UDP socket
+    closeXPCSocket();    
 }
 
 QStringList LinkManager::linkTypeStrings(void) const

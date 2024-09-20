@@ -30,6 +30,10 @@
     #include "SerialLink.h"
 #endif
 
+extern "C" {
+#include "xplaneConnect.h"
+}
+
 Q_DECLARE_LOGGING_CATEGORY(LinkManagerLog)
 Q_DECLARE_LOGGING_CATEGORY(LinkManagerVerboseLog)
 
@@ -133,6 +137,16 @@ public:
 
     static const char*  settingsGroup;
 
+    // Getter for the XPCSocket
+    XPCSocket& getXPCSocket() {
+        return _xpcSock;
+    }
+
+    void closeXPCSocket();
+
+public slots:
+    void initializeXPlaneXPCSocket();
+
 signals:
     void commPortStringsChanged();
     void commPortsChanged();
@@ -187,6 +201,8 @@ private:
     UdpIODevice                         _nmeaSocket;
 #endif
 #endif
+
+    XPCSocket _xpcSock;  // Declare this in LinkManager.h
 
     static const char*  _defaultUDPLinkName;
     static const char*  _mavlinkForwardingLinkName;

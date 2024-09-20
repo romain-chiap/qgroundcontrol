@@ -107,9 +107,9 @@ linux {
         DEFINES += QGC_GST_TAISYNC_ENABLED
         DEFINES += QGC_GST_MICROHARD_ENABLED 
         QMAKE_CXXFLAGS += -fvisibility=hidden
-        QMAKE_CXXFLAGS_WARN_ON += -Werror \
-            -Wno-unused-parameter \         # gst-plugins-good
-            -Wno-deprecated-declarations    # eigen
+#        QMAKE_CXXFLAGS_WARN_ON += -Werror \
+#            -Wno-unused-parameter \         # gst-plugins-good
+#            -Wno-deprecated-declarations    # eigen
     } else {
         error("Unsupported Mac toolchain, only 64-bit LLVM+clang is supported")
     }

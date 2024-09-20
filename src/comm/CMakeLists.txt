@@ -11,6 +11,10 @@ if(BUILD_TESTING)
 	)
 endif()
 
+# set_source_files_properties(xplaneConnect.c PROPERTIES LANGUAGE C)
+
+# set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-undefined,dynamic_lookup")
+
 add_library(comm
 	#BluetoothLink.cc
 	#BluetoothLink.h
@@ -38,6 +42,8 @@ add_library(comm
 	UdpIODevice.h
 	UDPLink.cc
 	UDPLink.h
+	xplaneConnect.c
+	xplaneConnect.h
 
 	${EXTRA_SRC}
 )
